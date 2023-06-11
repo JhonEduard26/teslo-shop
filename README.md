@@ -2,17 +2,25 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
+# Teslo API
+
 ## Description
 
 Teslo shop
 
-## Installation
+### Installation
 
 ```bash
 $ pnpm install
 ```
 
-## Running the app
+### Running the database
+
+```bash
+$ docker-compose up -d
+```
+
+### Running the app
 
 ```bash
 # development
