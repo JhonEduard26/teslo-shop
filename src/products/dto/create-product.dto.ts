@@ -12,7 +12,7 @@ import {
 export class CreateProductDto {
   @IsString()
   @MinLength(1)
-  title: number;
+  title: string;
 
   @IsNumber()
   @IsPositive()
@@ -21,11 +21,11 @@ export class CreateProductDto {
 
   @IsString()
   @IsOptional()
-  description?: number;
+  description?: string;
 
   @IsString()
   @IsOptional()
-  slug?: number;
+  slug?: string;
 
   @IsInt()
   @IsPositive()
