@@ -44,13 +44,19 @@ export class Product {
   @Column('text')
   gender: string;
 
+  @Column('text', {
+    array: true,
+    default: [],
+  })
+  tags: string[];
+
   @BeforeInsert()
   slugifyTitle() {
-    this.slug = this.title.toLowerCase().replace(/ /g, '-');
+    this.slug = this.title.toLowerCase().replace(/ /g, '-').replace("'", '');
   }
 
   @BeforeUpdate()
   slugifyTitleOnUpdate() {
-    this.slug = this.title.toLowerCase().replace(/ /g, '-');
+    this.slug = this.title.toLowerCase().replace(/ /g, '-').replace("'", '');
   }
 }
