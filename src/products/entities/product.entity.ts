@@ -49,5 +49,8 @@ export class Product {
     this.slug = this.title.toLowerCase().replace(/ /g, '-');
   }
 
-  // @BeforeUpdate()
+  @BeforeUpdate()
+  slugifyTitleOnUpdate() {
+    this.slug = this.title.toLowerCase().replace(/ /g, '-');
+  }
 }
