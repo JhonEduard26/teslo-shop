@@ -8,6 +8,7 @@ import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { FilesModule } from './files/files.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     FilesModule,
     ProductsModule,
     SeedModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
