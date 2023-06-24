@@ -9,10 +9,11 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { GetUser } from './decorators/get-user.decorator';
 import { User } from './entities/user.entity';
 import { GetRawHeaders } from './decorators/get-raw-headers.decorator';
+import { Roles } from './decorators/roles.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -37,5 +38,15 @@ export class AuthController {
     @GetRawHeaders() rawHeaders: string[],
   ) {
     return { user, userEmail, rawHeaders };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('private')
+  @Roles('admin')
+  getPrivate(@GetUser() user: User) {
+    return {
+      ok: true,
+      user,
+    };
   }
 }
