@@ -30,8 +30,12 @@ export class AuthService {
       await this.usersRepository.save(user);
       delete user.password;
 
-      return user;
-      // TODO: return jwt token
+      const payload = { id: user.id };
+
+      return {
+        ...user,
+        access_token: await this.generateJwtToken(payload),
+      };
     } catch (error) {
       console.log(error);
       if (error.code === '23505') throw new BadRequestException(error.detail);
@@ -43,7 +47,7 @@ export class AuthService {
 
     const user = await this.usersRepository.findOne({
       where: { email },
-      select: { email: true, password: true, isActive: true },
+      select: { id: true, email: true, password: true },
     });
 
     if (!user) throw new UnauthorizedException('Invalid email');
@@ -51,17 +55,17 @@ export class AuthService {
     if (!bcrypt.compareSync(password, user.password)) {
       throw new UnauthorizedException('Invalid password');
     }
+    delete user.password;
 
-    console.log(user);
-
-    if (!user.isActive) throw new UnauthorizedException('User is not active');
-
-    const payload = { email: user.email };
-
-    const token = await this.jwtService.signAsync(payload);
+    const payload = { id: user.id };
 
     return {
-      access_token: token,
+      ...user,
+      access_token: await this.generateJwtToken(payload),
     };
+  }
+
+  private async generateJwtToken(payload: { id: string }) {
+    return await this.jwtService.signAsync(payload);
   }
 }

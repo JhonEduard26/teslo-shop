@@ -4,13 +4,15 @@ import {
   Body,
   HttpCode,
   HttpStatus,
-  Request,
   Get,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { AuthGuard } from './auth.guard';
+import { GetUser } from './decorators/get-user.decorator';
+import { User } from './entities/user.entity';
+import { GetRawHeaders } from './decorators/get-raw-headers.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +31,11 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('profile')
-  getProfile(@Request() req: any) {
-    return req.user;
+  getProfile(
+    @GetUser() user: User,
+    @GetUser('email') userEmail: string,
+    @GetRawHeaders() rawHeaders: string[],
+  ) {
+    return { user, userEmail, rawHeaders };
   }
 }
