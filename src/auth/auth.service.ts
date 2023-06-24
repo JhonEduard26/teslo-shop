@@ -1,5 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
@@ -10,6 +15,7 @@ import { CreateUserDto, LoginUserDto } from './dto';
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
 
   async createUser(createUserDto: CreateUserDto) {
@@ -37,17 +43,25 @@ export class AuthService {
 
     const user = await this.usersRepository.findOne({
       where: { email },
-      select: { email: true, password: true },
+      select: { email: true, password: true, isActive: true },
     });
 
-    if (!user) throw new BadRequestException('Invalid email');
+    if (!user) throw new UnauthorizedException('Invalid email');
 
     if (!bcrypt.compareSync(password, user.password)) {
-      throw new BadRequestException('Invalid password');
+      throw new UnauthorizedException('Invalid password');
     }
 
-    return user;
+    console.log(user);
 
-    // TODO: return jwt token
+    if (!user.isActive) throw new UnauthorizedException('User is not active');
+
+    const payload = { email: user.email };
+
+    const token = await this.jwtService.signAsync(payload);
+
+    return {
+      access_token: token,
+    };
   }
 }
