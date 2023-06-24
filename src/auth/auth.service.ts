@@ -1,26 +1,53 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+
+import { User } from './entities/user.entity';
+import { CreateUserDto, LoginUserDto } from './dto';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+  ) {}
+
+  async createUser(createUserDto: CreateUserDto) {
+    try {
+      const { password, ...userData } = createUserDto;
+
+      const user = this.usersRepository.create({
+        ...userData,
+        password: bcrypt.hashSync(password, 10),
+      });
+
+      await this.usersRepository.save(user);
+      delete user.password;
+
+      return user;
+      // TODO: return jwt token
+    } catch (error) {
+      console.log(error);
+      if (error.code === '23505') throw new BadRequestException(error.detail);
+    }
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async loginUser(loginUserDto: LoginUserDto) {
+    const { email, password } = loginUserDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const user = await this.usersRepository.findOne({
+      where: { email },
+      select: { email: true, password: true },
+    });
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if (!user) throw new BadRequestException('Invalid email');
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    if (!bcrypt.compareSync(password, user.password)) {
+      throw new BadRequestException('Invalid password');
+    }
+
+    return user;
+
+    // TODO: return jwt token
   }
 }
