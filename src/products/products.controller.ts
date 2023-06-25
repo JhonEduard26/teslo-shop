@@ -13,6 +13,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
+import { Public } from '../auth/decorators';
 
 @Controller('products')
 export class ProductsController {
@@ -24,11 +25,13 @@ export class ProductsController {
   }
 
   @Get()
+  @Public()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.productsService.findAll(paginationDto);
   }
 
   @Get(':term')
+  @Public()
   findOne(@Param('term') term: string) {
     return this.productsService.findOnePlain(term);
   }

@@ -7,13 +7,13 @@ import {
   Get,
   UseGuards,
 } from '@nestjs/common';
+
+import { User } from './entities/user.entity';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { AuthGuard } from './guards/auth.guard';
-import { GetUser } from './decorators/get-user.decorator';
-import { User } from './entities/user.entity';
-import { GetRawHeaders } from './decorators/get-raw-headers.decorator';
-import { Roles } from './decorators/roles.decorator';
+import { Auth, GetRawHeaders, GetUser } from './decorators';
+import { ValidRoles } from './interfaces/valid-roles.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -40,10 +40,18 @@ export class AuthController {
     return { user, userEmail, rawHeaders };
   }
 
-  @UseGuards(AuthGuard)
   @Get('private')
-  @Roles('admin')
+  @Auth(ValidRoles.admin)
   getPrivate(@GetUser() user: User) {
+    return {
+      ok: true,
+      user,
+    };
+  }
+
+  @Get('private2')
+  @Auth(ValidRoles.user)
+  getPrivate2(@GetUser() user: User) {
     return {
       ok: true,
       user,
