@@ -20,12 +20,6 @@ $ pnpm install
 $ docker-compose up -d
 ```
 
-### Execute seed
-
-```bash
-$ GET: http://localhost:3000/api/seed
-```
-
 ### Running the app
 
 ```bash
@@ -37,4 +31,10 @@ $ pnpm run start:dev
 
 # production mode
 $ pnpm run start:prod
+```
+
+### Execute seed
+
+```bash
+$ GET: http://localhost:3000/api/seed
 ```
