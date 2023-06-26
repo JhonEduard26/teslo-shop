@@ -10,7 +10,9 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Files - Upload')
 @Controller('files')
 export class FilesController {
   constructor(
