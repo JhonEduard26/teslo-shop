@@ -30,8 +30,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  @Auth(ValidRoles.admin)
-  @ApiBearerAuth()
+  @Public()
   @ApiCreatedResponse({ description: 'User created successfully' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
